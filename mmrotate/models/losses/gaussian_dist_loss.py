@@ -309,6 +309,40 @@ def kld_symmin_loss(pred, target, fun='log1p', tau=1.0, alpha=1.0, sqrt=True):
     return postprocess(kld_symmin, fun=fun, tau=tau)
 
 
+@weighted_loss
+def probiou_loss(pred, target, **kwargs):
+    """Probabilistic Intersection over Union loss.
+
+    Args:
+        pred (torch.Tensor): Predicted bboxes.
+        target (torch.Tensor): Corresponding gt bboxes.
+
+    Returns:
+        loss (torch.Tensor)
+    """
+    xy_p, Sigma_p = pred
+    xy_t, Sigma_t = target
+    Sigma = 0.5 * (Sigma_p + Sigma_t)
+
+    det_p = Sigma_p[:, 0, 0] * Sigma_p[:, 1, 1] - (Sigma_p[:, 0, 1]**2)
+    det_t = Sigma_t[:, 0, 0] * Sigma_t[:, 1, 1] - (Sigma_t[:, 0, 1]**2)
+    xy_diffs = xy_p - xy_t
+
+    x = xy_diffs[:, 0]
+    y = xy_diffs[:, 1]
+    a = Sigma[:, 0, 0]
+    b = Sigma[:, 1, 1]
+    c = Sigma[:, 0, 1]
+    det = a * b - (c**2)
+
+    term1 = ((a * y**2) + (b * x**2) + 2 * (-c * x * y)) / det
+    term2 = torch.log(det / (torch.sqrt(det_p * det_t)))
+    bcd_dis = torch.exp(-(0.125 * term1 + 0.5 * term2))
+    loss = torch.sqrt(1 - bcd_dis.clamp(max=1.0))
+
+    return loss
+
+
 @MODELS.register_module()
 class GDLoss(nn.Module):
     """Gaussian based loss.
@@ -332,7 +366,8 @@ class GDLoss(nn.Module):
         'kld': kld_loss,
         'jd': jd_loss,
         'kld_symmax': kld_symmax_loss,
-        'kld_symmin': kld_symmin_loss
+        'kld_symmin': kld_symmin_loss,
+        'probiou': probiou_loss,
     }
     BAG_PREP = {
         'xy_stddev_pearson': xy_stddev_pearson_2_xy_sigma,
