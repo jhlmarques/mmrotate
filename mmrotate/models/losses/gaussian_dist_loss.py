@@ -338,7 +338,7 @@ def probiou_loss(pred, target, **kwargs):
     term1 = ((a * y**2) + (b * x**2) + 2 * (-c * x * y)) / det
     term2 = torch.log(det / (torch.sqrt(det_p * det_t)))
     bcd_dis = torch.exp(-(0.125 * term1 + 0.5 * term2))
-    loss = torch.sqrt(1 - bcd_dis.clamp(max=1.0))
+    loss = torch.sqrt(1 - bcd_dis)
 
     return loss
 
