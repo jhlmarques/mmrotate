@@ -10,7 +10,18 @@ Oriented object detection is a challenging and relatively new problem. Most exis
 
 ## Results and models
 
-WIP
+DOTA1.0
+
+|         Backbone         |  mAP  | Angle | lr schd | Aug | Batch Size |                                                   Configs                                                   |  Download   |
+| :----------------------: | :---: | :---: | :-----: | :-: | :--------: | :---------------------------------------------------------------------------------------------------------: | :---------: |
+| ResNet50 (1024,1024,200) | 68.27 |  oc   |   1x    |  -  |     2      | [rotated-retinanet-hbox-oc_r50_fpn_probiou_1x_dota](./rotated-retinanet-hbox-oc_r50_fpn_probiou_1x_dota.py) | [model](<>) |
+| ResNet50 (1024,1024,200) | 71.68 |  oc   |   1x    |  -  |     2      |                  [r3det-oc_r50_fpn_probiou_1x_dota](./r3det-oc_r50_fpn_probiou_1x_dota.py)                  | [model](<>) |
+
+HRSC
+
+|      Backbone      | AP50  | AP75  | Angle | lr schd | Aug | Batch Size |                                                    Configs                                                     |  Download   |
+| :----------------: | :---: | :---: | :---: | :-----: | :-: | :--------: | :------------------------------------------------------------------------------------------------------------: | :---------: |
+| ResNet50 (800,512) | 84.79 | 59.50 |  oc   |   6x    | RR  |     2      | [rotated-retinanet-hbox-oc_r50_fpn_probiou_rr-6x_hrsc](./rotated-retinanet-hbox-oc_r50_fpn_probiou_rr-6x_hrsc) | [model](<>) |
 
 ## Citation
 
